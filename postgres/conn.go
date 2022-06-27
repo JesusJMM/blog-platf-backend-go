@@ -10,11 +10,11 @@ import (
 )
 
 func New() (*ksql.DB, error) {
-  ctx := context.Background()
+	ctx := context.Background()
 
-  db, err := kpgx.New(ctx, os.Getenv("POSTGRES_URL"), ksql.Config{})
-  if err != nil{
-    return nil, fmt.Errorf("Error opening database: %w", err)
-  }
-  return &db, nil
+	db, err := kpgx.New(ctx, os.Getenv("POSTGRES_URL"), ksql.Config{})
+	if err != nil {
+		return nil, fmt.Errorf("Error opening database: %w", err)
+	}
+	return &db, nil
 }
