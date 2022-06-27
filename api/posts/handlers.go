@@ -3,7 +3,7 @@ package posts
 import (
 	"context"
 
-	"github.com/JesusJMM/blog-plat-go/postgres"
+	// "github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/gin-gonic/gin"
 	"github.com/vingarcia/ksql"
 )
@@ -20,14 +20,14 @@ func New(db *ksql.DB, ctx context.Context) PostsHandler {
 	}
 }
 
-type PostAndUserRow struct {
-	Article postgres.Article `tablename:"a"`
-	Author postgres.User     `tablename:"u"`
+type PartialPostWithAuthor struct {
+	Article PartialArticle `tablename:"a"`
+	Author  Author         `tablename:"u"`
 }
 
 func (h PostsHandler) AllPosts() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var posts []PostAndUserRow
+		var posts []PartialPostWithAuthor
 		err := h.db.Query(h.ctx, &posts,
 			"FROM articles as a LEFT JOIN users as u on a.user_id = a.user_id",
 		)
