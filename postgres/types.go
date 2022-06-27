@@ -8,7 +8,7 @@ import (
 type Article struct {
   ID        int       `ksql:"article_id" json:"id"`
   Title     string    `ksql:"title" json:"title"`
-  Desc      *string    `ksql:"desc" json:"desc"`
+  Desc      *string    `ksql:"description" json:"desc"`
   Content   *string    `ksql:"content" json:"content"`
   CreatedAt time.Time `ksql:"created_at" json:"created_at"`
   UpdatedAt time.Time `ksql:"updated_at" json:"updated_at"`

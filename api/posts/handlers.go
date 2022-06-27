@@ -14,7 +14,7 @@ type PostsHandler struct{
 }
 
 type PostAndUserRow struct {
-  Post postgres.Post `tablename:"p"`
+  Post postgres.Article `tablename:"p"`
   User postgres.User `tablename:"u"`
 }
 
