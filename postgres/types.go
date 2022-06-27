@@ -21,7 +21,7 @@ type Article struct {
 type User struct {
   ID       int    `ksql:"user_id"`
 	Name     string `ksql:"name"`
-	password string `ksql:"password"`
+	Password string `ksql:"password"`
 	Img      *string `ksql:"img"`
 }
 
@@ -31,13 +31,13 @@ func (u User) EncryptAndSetPassword(newPassword string)(error){
   if err != nil {
     return err
   }
-  u.password = string(pass)
+  u.Password = string(pass)
   return nil
 }
 
 // Check if the given password is correct
 // return true on success and false on failure
 func (u User) ValidPassword(password string)(bool){
-  err := bcrypt.CompareHashAndPassword([]byte(u.password), []byte(password))
+  err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
   return err == nil
 }
