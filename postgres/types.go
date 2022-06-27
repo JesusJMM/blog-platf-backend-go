@@ -5,24 +5,24 @@ import (
   "golang.org/x/crypto/bcrypt"
 )
 
-type Post struct {
-  ID        int       `ksql:"post_id" json:"id"`
+type Article struct {
+  ID        int       `ksql:"article_id" json:"id"`
   Title     string    `ksql:"title" json:"title"`
-  Desc      string    `ksql:"desc" json:"desc"`
-  Content   string    `ksql:"content" json:"content"`
+  Desc      *string    `ksql:"desc" json:"desc"`
+  Content   *string    `ksql:"content" json:"content"`
   CreatedAt time.Time `ksql:"created_at" json:"created_at"`
   UpdatedAt time.Time `ksql:"updated_at" json:"updated_at"`
   Slug      string    `ksql:"slug" json:"slug"`
-  SmImg     string    `ksql:"sm_img" json:"smImg"`
-  LgImg     string    `ksql:"lg_img" json:"lgImg"`
-  UserId    string    `ksql:"user_id" json:"userID"`
+  SmImg     *string    `ksql:"sm_img" json:"smImg"`
+  LgImg     *string    `ksql:"lg_img" json:"lgImg"`
+  UserID    int    `ksql:"user_id" json:"userID"`
 }
 
 type User struct {
   ID       int    `ksql:"user_id"`
 	Name     string `ksql:"name"`
 	password string `ksql:"password"`
-	Img      string `ksql:"img"`
+	Img      *string `ksql:"img"`
 }
 
 // Encrypt the password and set to the struct
