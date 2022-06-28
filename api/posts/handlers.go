@@ -2,7 +2,6 @@ package posts
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	// "github.com/JesusJMM/blog-plat-go/postgres"
@@ -33,7 +32,9 @@ const PartialArticleQuery = `
     ON a.user_id = u.user_id
 `
 
-func (h PostsHandler) AllArticles() gin.HandlerFunc {
+const PaginationSize = 10
+
+func (h PostsHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var posts []PartialPostWithAuthor
 		err := h.db.Query(h.ctx, &posts,
@@ -47,7 +48,7 @@ func (h PostsHandler) AllArticles() gin.HandlerFunc {
 	}
 }
 
-func (h PostsHandler) ArticlesPaginated() gin.HandlerFunc {
+func (h PostsHandler) Paginated() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryPage := c.DefaultQuery("page", "1")
 		page, err := strconv.Atoi(queryPage)
@@ -56,11 +57,13 @@ func (h PostsHandler) ArticlesPaginated() gin.HandlerFunc {
 			return
 		}
 		var posts []PartialPostWithAuthor
-    q := PartialArticleQuery + fmt.Sprintf(`ORDER BY a.article_id LIMIT %d OFFSET %d `, 10, (page -1) * 10)
+    q := PartialArticleQuery + `ORDER BY a.article_id LIMIT $1 OFFSET $2`
 		err = h.db.Query(
       h.ctx, 
       &posts,
       q,
+      PaginationSize,
+      (page -1) * PaginationSize,
 		)
     if err != nil {
       c.JSON(500, gin.H{"error": err.Error()})
@@ -70,13 +73,21 @@ func (h PostsHandler) ArticlesPaginated() gin.HandlerFunc {
 	}
 }
 
-func (h PostsHandler) AllArticlesByAuthor() gin.HandlerFunc {
+func (h PostsHandler) ByAuthorPaginated() gin.HandlerFunc {
   return func(c *gin.Context) {
     author := c.Param("author")
+		queryPage := c.DefaultQuery("page", "1")
+		page, err := strconv.Atoi(queryPage)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
+			return
+		}
     posts := []PartialPostWithAuthor{}
-    err := h.db.Query(h.ctx, &posts,
-      PartialArticleQuery + `WHERE u.name=$1 ORDER BY a.article_id`,
+    err = h.db.Query(h.ctx, &posts,
+      PartialArticleQuery + `WHERE u.name=$1 ORDER BY a.article_id LIMIT $2 OFFSET $3`,
       author,
+      PaginationSize,
+      (page -1) * PaginationSize,
     )
     if err != nil {
       c.JSON(500, gin.H{"error": err.Error()})
