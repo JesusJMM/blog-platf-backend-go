@@ -17,5 +17,6 @@ func New(db *ksql.DB) gin.Engine{
 
   api.GET("/posts/all", articleH.AllArticles())
   api.GET("/posts/paginated", articleH.ArticlesPaginated())
+  api.GET("/posts/author/:author", articleH.AllArticlesByAuthor())
   return *r
 }
