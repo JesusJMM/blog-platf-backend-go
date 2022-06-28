@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Struct of article
 type Article struct {
 	ID        int       `ksql:"article_id" json:"id"`
 	Title     string    `ksql:"title" json:"title"`
@@ -18,6 +19,8 @@ type Article struct {
 	UserID    int       `ksql:"user_id" json:"userID"`
 }
 
+// Struct of user
+// ( sensitive information )
 type User struct {
 	ID       int     `ksql:"user_id"`
 	Name     string  `ksql:"name"`

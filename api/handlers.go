@@ -8,7 +8,8 @@ import (
 	"github.com/vingarcia/ksql"
 )
 
-
+// Return a instance of gin.Engine with all routes
+// registered
 func New(db *ksql.DB) gin.Engine{
   r := gin.Default()
   api := r.Group("/api")

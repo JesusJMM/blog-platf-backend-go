@@ -9,6 +9,8 @@ import (
 	"github.com/vingarcia/ksql/adapters/kpgx"
 )
 
+// Return an instance of ksql.DB
+// uses POSTGRES_URL enviroment variable
 func New() (*ksql.DB, error) {
 	ctx := context.Background()
 
