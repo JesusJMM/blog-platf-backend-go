@@ -9,7 +9,7 @@ import (
 
 type UserRepository interface {
 	Create(postgres.User) (postgres.User, error)
-	ChangePassword(postgres.User) error
+	ChangePassword(int, string) error
 }
 
 type UserRepo struct {

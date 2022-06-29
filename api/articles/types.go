@@ -1,4 +1,4 @@
-package posts
+package articles
 
 import "time"
 
