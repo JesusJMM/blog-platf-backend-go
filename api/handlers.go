@@ -16,8 +16,8 @@ func New(db *ksql.DB) gin.Engine{
 
   articleH := articles.New(db, context.Background())
 
-  api.GET("/posts/all", articleH.All())
-  api.GET("/posts/paginated", articleH.Paginated())
-  api.GET("/posts/author/:author", articleH.ByAuthorPaginated())
+  api.GET("/articles/all", articleH.All())
+  api.GET("/articles/paginated", articleH.Paginated())
+  api.GET("/articles/author/:author", articleH.ByAuthorPaginated())
   return *r
 }
