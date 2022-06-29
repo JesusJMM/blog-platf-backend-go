@@ -35,6 +35,7 @@ const PartialArticleQuery = `
 const PaginationSize = 10
 
 // Returns all posts in the database
+// METHOD: GET
 func (h PostsHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var posts []PartialPostWithAuthor
@@ -50,7 +51,7 @@ func (h PostsHandler) All() gin.HandlerFunc {
 }
 
 // Return a set of PartialPostWithAuthor 
-// (paginated route)
+// METHOD: GET (paginated route)
 func (h PostsHandler) Paginated() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryPage := c.DefaultQuery("page", "1")
@@ -78,7 +79,7 @@ func (h PostsHandler) Paginated() gin.HandlerFunc {
 
 // Return a set of PartialPostWithAuthor by author
 // requires an 'author' url param
-// (paginated route)
+// METHOD: GET (paginated route)
 func (h PostsHandler) ByAuthorPaginated() gin.HandlerFunc {
   return func(c *gin.Context) {
     author := c.Param("author")
