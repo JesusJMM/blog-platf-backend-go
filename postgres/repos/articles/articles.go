@@ -28,6 +28,8 @@ func NewArticleRepo(db ksql.DB) ArticleRepo {
 	}
 }
 
+var ErrArticleConflict = errors.New("Conflict with another article's slug attribute")
+
 func (r ArticleRepo) Create(article postgres.Article) (outArticle postgres.Article, err error) {
 	outArticle = article
 	err = r.db.Transaction(r.ctx, func(p ksql.Provider) error {
@@ -42,9 +44,9 @@ func (r ArticleRepo) Create(article postgres.Article) (outArticle postgres.Artic
 		)
 		if err != nil {
 			if !errors.Is(err, sql.ErrNoRows) {
-				return fmt.Errorf("Error inserting article: there exist another article with the same slug and user_id")
+				return err
 			}
-			return err
+			return ErrArticleConflict 
 		}
 		err = p.Insert(r.ctx, postgres.ArticleTable, &outArticle)
 		if err != nil {
@@ -88,9 +90,9 @@ func (r ArticleRepo) Update(article *UpdateArticleParams) error {
 		)
 		if err != nil {
 			if !errors.Is(err, sql.ErrNoRows) {
-				return fmt.Errorf("Error inserting article: there exist another article with the same slug and user_id")
+				return err
 			}
-			return err
+			return ErrArticleConflict
 		}
 		err = p.Patch(r.ctx, postgres.ArticleTable, article)
 		if err != nil {
