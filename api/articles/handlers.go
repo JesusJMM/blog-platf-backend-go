@@ -51,7 +51,7 @@ func (h ArticleHandler) All() gin.HandlerFunc {
 	}
 }
 
-// Return a set of PartialPostWithAuthor 
+// Return a set of PartialPostWithAuthor
 // METHOD: GET (paginated route)
 func (h ArticleHandler) Paginated() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -62,19 +62,19 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			return
 		}
 		var posts []PartialPostWithAuthor
-    q := PartialArticleQuery + `ORDER BY a.article_id LIMIT $1 OFFSET $2`
+		q := PartialArticleQuery + `ORDER BY a.article_id LIMIT $1 OFFSET $2`
 		err = h.db.Query(
-      h.ctx, 
-      &posts,
-      q,
-      PaginationSize,
-      (page -1) * PaginationSize,
+			h.ctx,
+			&posts,
+			q,
+			PaginationSize,
+			(page-1)*PaginationSize,
 		)
-    if err != nil {
-      c.JSON(500, gin.H{"error": err.Error()})
-      return
-    }
-    c.JSON(200, gin.H{"posts": posts})
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"posts": posts})
 	}
 }
 
@@ -82,25 +82,25 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 // requires an 'author' url param
 // METHOD: GET (paginated route)
 func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
-  return func(c *gin.Context) {
-    author := c.Param("author")
+	return func(c *gin.Context) {
+		author := c.Param("author")
 		queryPage := c.DefaultQuery("page", "1")
 		page, err := strconv.Atoi(queryPage)
 		if err != nil {
 			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-    posts := []PartialPostWithAuthor{}
-    err = h.db.Query(h.ctx, &posts,
-      PartialArticleQuery + `WHERE u.name=$1 ORDER BY a.article_id LIMIT $2 OFFSET $3`,
-      author,
-      PaginationSize,
-      (page -1) * PaginationSize,
-    )
-    if err != nil {
-      c.JSON(500, gin.H{"error": err.Error()})
-      return
-    }
-    c.JSON(200, gin.H{"posts": posts})
-  }
+		posts := []PartialPostWithAuthor{}
+		err = h.db.Query(h.ctx, &posts,
+			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id LIMIT $2 OFFSET $3`,
+			author,
+			PaginationSize,
+			(page-1)*PaginationSize,
+		)
+		if err != nil {
+			c.JSON(500, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"posts": posts})
+	}
 }

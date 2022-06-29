@@ -12,18 +12,18 @@ import (
 
 // Return a instance of gin.Engine with all routes
 // registered
-func New(db *ksql.DB) gin.Engine{
-  r := gin.Default()
-  api := r.Group("/api")
+func New(db *ksql.DB) gin.Engine {
+	r := gin.Default()
+	api := r.Group("/api")
 
-  articleH := articles.New(db, context.Background())
-  authH := auth.New(db, context.Background(), users.New(db, context.Background()))
+	articleH := articles.New(db, context.Background())
+	authH := auth.New(db, context.Background(), users.New(db, context.Background()))
 
-  api.GET("/articles/all", articleH.All())
-  api.GET("/articles/paginated", articleH.Paginated())
-  api.GET("/articles/author/:author", articleH.ByAuthorPaginated())
-  
-  api.POST("/auth/signup", authH.Signup())
-  api.POST("/auth/login", authH.Login())
-  return *r
+	api.GET("/articles/all", articleH.All())
+	api.GET("/articles/paginated", articleH.Paginated())
+	api.GET("/articles/author/:author", articleH.ByAuthorPaginated())
+
+	api.POST("/auth/signup", authH.Signup())
+	api.POST("/auth/login", authH.Login())
+	return *r
 }

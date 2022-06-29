@@ -14,7 +14,8 @@ type TokenClaims struct {
 }
 
 var SECRET_KEY []byte
-const TOKEN_DURATION = 24*time.Hour
+
+const TOKEN_DURATION = 24 * time.Hour
 
 func init() {
 	SECRET_KEY = []byte(os.Getenv("TOKEN_SECRET_KEY"))
@@ -36,9 +37,9 @@ func SignToken(UID int) (string, error) {
 
 func ParseToken(tokenString string) (*jwt.Token, *TokenClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(t *jwt.Token) (interface{}, error) {
-    if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-      return nil, fmt.Errorf("Unspected signing method: %v", t.Header["alg"])
-    }
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unspected signing method: %v", t.Header["alg"])
+		}
 		return SECRET_KEY, nil
 	})
 	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {

@@ -1,6 +1,6 @@
 package postgres
 
-import(
+import (
 	"github.com/vingarcia/ksql"
 )
 

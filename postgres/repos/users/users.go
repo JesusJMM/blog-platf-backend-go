@@ -17,11 +17,11 @@ type UserRepo struct {
 	ctx context.Context
 }
 
-func New(db *ksql.DB, ctx context.Context) *UserRepo{
-  return &UserRepo{
-    db: db,
-    ctx: ctx,
-  }
+func New(db *ksql.DB, ctx context.Context) *UserRepo {
+	return &UserRepo{
+		db:  db,
+		ctx: ctx,
+	}
 
 }
 
@@ -37,7 +37,7 @@ func (r UserRepo) Create(user postgres.User) (postgres.User, error) {
 }
 
 type updateUserPassword struct {
-	ID       int    `ksql:"user_id"`
+	ID       int     `ksql:"user_id"`
 	Password *string `ksql:"password"`
 }
 
@@ -46,8 +46,8 @@ func (r UserRepo) ChangePassword(id int, password string) error {
 	if err != nil {
 		return err
 	}
-  return r.db.Patch(r.ctx, postgres.UserTable, updateUserPassword{
-    ID: id,
-    Password: &pass,
-  })
+	return r.db.Patch(r.ctx, postgres.UserTable, updateUserPassword{
+		ID:       id,
+		Password: &pass,
+	})
 }

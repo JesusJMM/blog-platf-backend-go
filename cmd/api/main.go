@@ -7,11 +7,11 @@ import (
 	"github.com/JesusJMM/blog-plat-go/postgres"
 )
 
-func main(){
-  db, err := postgres.New()
-  if err != nil {
-    log.Fatal(err)
-  }
-  r := api.New(db)
-  r.Run()
+func main() {
+	db, err := postgres.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+	r := api.New(db)
+	r.Run()
 }
