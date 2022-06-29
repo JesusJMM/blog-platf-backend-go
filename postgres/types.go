@@ -21,8 +21,8 @@ type Article struct {
 // Struct of user
 // ( sensitive information )
 type User struct {
-	ID       int     `ksql:"user_id"`
-	Name     string  `ksql:"name"`
-	Password string  `ksql:"password"`
-	Img      *string `ksql:"img"`
+	ID       int     `ksql:"user_id" json:"id"`
+	Name     string  `ksql:"name" json:"name"`
+	Password string  `ksql:"password" json:"-"`
+	Img      *string `ksql:"img" json:"img"`
 }

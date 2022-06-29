@@ -13,9 +13,3 @@ type PartialArticle struct {
 	LgImg     *string   `ksql:"lg_img" json:"lgImg"`
 	UserID    int       `ksql:"user_id" json:"userID"`
 }
-
-type Author struct {
-	ID   int     `ksql:"user_id" json:"userId"`
-	Name string  `ksql:"name" json:"name"`
-	Img  *string `ksql:"img" json:"img"`
-}

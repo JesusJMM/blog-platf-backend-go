@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	// "github.com/JesusJMM/blog-plat-go/postgres"
+	"github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/gin-gonic/gin"
 	"github.com/vingarcia/ksql"
 )
@@ -23,7 +24,7 @@ func New(db *ksql.DB, ctx context.Context) PostsHandler {
 
 type PartialPostWithAuthor struct {
 	Article PartialArticle `tablename:"a"`
-	Author  Author         `tablename:"u"`
+	Author  postgres.User  `tablename:"u"`
 }
 
 const PartialArticleQuery = `
