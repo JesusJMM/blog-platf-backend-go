@@ -29,8 +29,8 @@ type User struct {
 }
 
 // Encrypt the password and set to the struct
-func (u User) EncryptAndSetPassword(newPassword string) error {
-	pass, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+func (u User) EncryptAndSetPassword() error {
+	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
