@@ -13,8 +13,16 @@ type UserRepository interface {
 }
 
 type UserRepo struct {
-	db  ksql.DB
+	db  *ksql.DB
 	ctx context.Context
+}
+
+func New(db *ksql.DB, ctx context.Context) *UserRepo{
+  return &UserRepo{
+    db: db,
+    ctx: ctx,
+  }
+
 }
 
 func (r UserRepo) Create(user postgres.User) (postgres.User, error) {

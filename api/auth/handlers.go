@@ -12,12 +12,12 @@ import (
 )
 
 type AuthHandler struct {
-	db  ksql.DB
+	db  *ksql.DB
 	ctx context.Context
   userRepo users.UserRepository
 }
 
-func New(db ksql.DB, ctx context.Context, userRepo users.UserRepository) *AuthHandler {
+func New(db *ksql.DB, ctx context.Context, userRepo users.UserRepository) *AuthHandler {
 	return &AuthHandler{
 		db,
 		ctx,
@@ -72,7 +72,7 @@ func (h AuthHandler) Login() gin.HandlerFunc {
       return 
     }
     var dbUser postgres.User
-    err := h.db.QueryOne(h.ctx, &dbUser, "FROM users WHERE name $1 LIMIT 1", payload.Name)
+    err := h.db.QueryOne(h.ctx, &dbUser, "FROM users WHERE name=$1 LIMIT 1", payload.Name)
     if err != nil {
       c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
       return 
