@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"database/sql"
+	"errors"
 	"net/http"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -74,6 +76,10 @@ func (h AuthHandler) Login() gin.HandlerFunc {
     var dbUser postgres.User
     err := h.db.QueryOne(h.ctx, &dbUser, "FROM users WHERE name=$1 LIMIT 1", payload.Name)
     if err != nil {
+      if errors.Is(err, sql.ErrNoRows){
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not exist"})
+        return
+      }
       c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
       return 
     }

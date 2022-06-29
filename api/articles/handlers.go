@@ -10,13 +10,13 @@ import (
 	"github.com/vingarcia/ksql"
 )
 
-type PostsHandler struct {
+type ArticleHandler struct {
 	db  *ksql.DB
 	ctx context.Context
 }
 
-func New(db *ksql.DB, ctx context.Context) PostsHandler {
-	return PostsHandler{
+func New(db *ksql.DB, ctx context.Context) ArticleHandler {
+	return ArticleHandler{
 		db:  db,
 		ctx: ctx,
 	}
@@ -37,7 +37,7 @@ const PaginationSize = 10
 
 // Returns all posts in the database
 // METHOD: GET
-func (h PostsHandler) All() gin.HandlerFunc {
+func (h ArticleHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var posts []PartialPostWithAuthor
 		err := h.db.Query(h.ctx, &posts,
@@ -53,7 +53,7 @@ func (h PostsHandler) All() gin.HandlerFunc {
 
 // Return a set of PartialPostWithAuthor 
 // METHOD: GET (paginated route)
-func (h PostsHandler) Paginated() gin.HandlerFunc {
+func (h ArticleHandler) Paginated() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		queryPage := c.DefaultQuery("page", "1")
 		page, err := strconv.Atoi(queryPage)
@@ -81,7 +81,7 @@ func (h PostsHandler) Paginated() gin.HandlerFunc {
 // Return a set of PartialPostWithAuthor by author
 // requires an 'author' url param
 // METHOD: GET (paginated route)
-func (h PostsHandler) ByAuthorPaginated() gin.HandlerFunc {
+func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
   return func(c *gin.Context) {
     author := c.Param("author")
 		queryPage := c.DefaultQuery("page", "1")
