@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -26,21 +25,4 @@ type User struct {
 	Name     string  `ksql:"name"`
 	Password string  `ksql:"password"`
 	Img      *string `ksql:"img"`
-}
-
-// Encrypt the password and set to the struct
-func (u User) EncryptAndSetPassword() error {
-	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-	u.Password = string(pass)
-	return nil
-}
-
-// Check if the given password is correct
-// return true on success and false on failure
-func (u User) ValidPassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
-	return err == nil
 }
