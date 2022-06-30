@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -13,18 +12,19 @@ import (
 
 type ArticleRepository interface {
 	Create(postgres.Article) (postgres.Article, error)
-	Update(postgres.Article) (postgres.Article, error)
+	Update(*UpdateArticleParams) error
 	Delete(int) error
 }
 
 type ArticleRepo struct {
-	db  ksql.DB
+	db  *ksql.DB
 	ctx context.Context
 }
 
-func NewArticleRepo(db ksql.DB) ArticleRepo {
+func NewArticleRepo(db *ksql.DB, ctx context.Context) ArticleRepo {
 	return ArticleRepo{
 		db: db,
+    ctx: ctx,
 	}
 }
 
@@ -58,7 +58,7 @@ func (r ArticleRepo) Create(article postgres.Article) (outArticle postgres.Artic
 }
 
 type UpdateArticleParams struct {
-	ID        int        `ksql:"article_id" json:"id"`
+  ID        int        `ksql:"article_id" json:"id" binding:"required"`
 	Title     *string    `ksql:"title" json:"title"`
 	Desc      *string    `ksql:"description" json:"desc"`
 	Content   *string    `ksql:"content" json:"content"`
@@ -66,7 +66,7 @@ type UpdateArticleParams struct {
 	Slug      *string    `ksql:"slug" json:"slug"`
 	SmImg     *string    `ksql:"sm_img" json:"smImg"`
 	LgImg     *string    `ksql:"lg_img" json:"lgImg"`
-	UserID    int        `ksql:"user_id" json:"userID"`
+  UserID    int        `ksql:"user_id" json:"userID" binding:"required"`
 }
 
 func (r ArticleRepo) Update(article *UpdateArticleParams) error {

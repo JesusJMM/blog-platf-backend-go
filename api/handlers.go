@@ -6,6 +6,7 @@ import (
 	"github.com/JesusJMM/blog-plat-go/api/articles"
 	"github.com/JesusJMM/blog-plat-go/api/auth"
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/users"
+	articlesRepo "github.com/JesusJMM/blog-plat-go/postgres/repos/articles"
 	"github.com/gin-gonic/gin"
 	"github.com/vingarcia/ksql"
 )
@@ -16,7 +17,7 @@ func New(db *ksql.DB) gin.Engine {
 	r := gin.Default()
 	api := r.Group("/api")
 
-	articleH := articles.New(db, context.Background())
+	articleH := articles.New(db, context.Background(), articlesRepo.NewArticleRepo(db, context.Background()))
 	authH := auth.New(db, context.Background(), users.New(db, context.Background()))
 
 	api.GET("/articles/all", articleH.All())

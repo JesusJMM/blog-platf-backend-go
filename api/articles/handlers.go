@@ -6,6 +6,7 @@ import (
 
 	// "github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/JesusJMM/blog-plat-go/postgres"
+	"github.com/JesusJMM/blog-plat-go/postgres/repos/articles"
 	"github.com/gin-gonic/gin"
 	"github.com/vingarcia/ksql"
 )
@@ -13,12 +14,14 @@ import (
 type ArticleHandler struct {
 	db  *ksql.DB
 	ctx context.Context
+  articleRepo articles.ArticleRepository
 }
 
-func New(db *ksql.DB, ctx context.Context) ArticleHandler {
+func New(db *ksql.DB, ctx context.Context, articleRepo articles.ArticleRepository) ArticleHandler {
 	return ArticleHandler{
 		db:  db,
 		ctx: ctx,
+    articleRepo: articleRepo,
 	}
 }
 
