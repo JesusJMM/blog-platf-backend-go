@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/JesusJMM/blog-plat-go/api/auth"
 	"github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/articles"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,11 @@ type CreatePayload struct {
 // METHOD: POST
 func (h ArticleHandler) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
+    claims, err := auth.GetTokenClaimsFromContext(c)
+    if err != nil {
+      c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+      return
+    }
     var payload CreatePayload
     if err := c.ShouldBindJSON(payload); err != nil {
       c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -36,6 +42,7 @@ func (h ArticleHandler) Create() gin.HandlerFunc {
       Slug: payload.Slug,
       SmImg: &payload.SmImg,
       LgImg: &payload.LgImg,
+      UserID: claims.UID,
     })
     if err != nil {
       if errors.Is(err, articles.ErrArticleConflict){
@@ -51,11 +58,17 @@ func (h ArticleHandler) Create() gin.HandlerFunc {
 
 func (h ArticleHandler) Update() gin.HandlerFunc {
   return func(c *gin.Context) {
+    claims, err := auth.GetTokenClaimsFromContext(c)
+    if err != nil {
+      c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+      return
+    }
     var payload articles.UpdateArticleParams
     if err := c.ShouldBindJSON(payload); err != nil {
       c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
     }
-    err := h.articleRepo.Update(&payload)
+    payload.UserID = claims.UID
+    err = h.articleRepo.Update(&payload)
     if err != nil{
       if errors.Is(err, articles.ErrArticleConflict){
         c.JSON(http.StatusConflict, gin.H{"error": err.Error()})

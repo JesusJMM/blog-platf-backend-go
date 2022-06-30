@@ -66,7 +66,7 @@ type UpdateArticleParams struct {
 	Slug      *string    `ksql:"slug" json:"slug"`
 	SmImg     *string    `ksql:"sm_img" json:"smImg"`
 	LgImg     *string    `ksql:"lg_img" json:"lgImg"`
-  UserID    int        `ksql:"user_id" json:"userID" binding:"required"`
+  UserID    int        `ksql:"user_id" json:"-"`
 }
 
 func (r ArticleRepo) Update(article *UpdateArticleParams) error {
@@ -103,6 +103,7 @@ func (r ArticleRepo) Update(article *UpdateArticleParams) error {
 	return err
 }
 
-func (r ArticleRepo) Delete(id int) error {
-	return r.db.Delete(r.ctx, postgres.ArticleTable, id)
+func (r ArticleRepo) Delete(id, userID int) error {
+  _, err := r.db.Exec(r.ctx, "DELETE FROM articles WHERE article_id=$1 AND user_id=$2", id, userID)
+  return err
 }
