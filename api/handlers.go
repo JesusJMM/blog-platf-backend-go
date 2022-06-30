@@ -23,6 +23,7 @@ func New(db *ksql.DB) gin.Engine {
 	api.GET("/articles/all", articleH.All())
 	api.GET("/articles/paginated", articleH.Paginated())
 	api.GET("/articles/author/:author", articleH.ByAuthorPaginated())
+  api.GET("/article/:author/:slug", articleH.OneArticle())
 
   api.POST("/article", auth.AuthRequired, articleH.Create())
   api.PUT("/article", auth.AuthRequired, articleH.Update())

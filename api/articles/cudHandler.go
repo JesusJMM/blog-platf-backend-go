@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/JesusJMM/blog-plat-go/api/auth"
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -43,6 +44,8 @@ func (h ArticleHandler) Create() gin.HandlerFunc {
       SmImg: &payload.SmImg,
       LgImg: &payload.LgImg,
       UserID: claims.UID,
+      CreatedAt: time.Now(),
+      UpdatedAt: time.Now(),
     })
     if err != nil {
       if errors.Is(err, articles.ErrArticleConflict){

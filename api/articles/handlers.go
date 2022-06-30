@@ -2,6 +2,9 @@ package articles
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"net/http"
 	"strconv"
 
 	// "github.com/JesusJMM/blog-plat-go/postgres"
@@ -64,11 +67,11 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-		var posts []PartialPostWithAuthor
+		var articles []PartialPostWithAuthor
 		q := PartialArticleQuery + `ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`
 		err = h.db.Query(
 			h.ctx,
-			&posts,
+			&articles,
 			q,
 			PaginationSize,
 			(page-1)*PaginationSize,
@@ -77,7 +80,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"posts": posts})
+		c.JSON(200, gin.H{"posts": articles})
 	}
 }
 
@@ -93,8 +96,8 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-		posts := []PartialPostWithAuthor{}
-		err = h.db.Query(h.ctx, &posts,
+		articles := []PartialPostWithAuthor{}
+		err = h.db.Query(h.ctx, &articles,
 			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id DESC LIMIT $2 OFFSET $3`,
 			author,
 			PaginationSize,
@@ -104,6 +107,31 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"posts": posts})
+		c.JSON(200, gin.H{"posts": articles})
 	}
+}
+
+func (h ArticleHandler) OneArticle() gin.HandlerFunc {
+  return func(c *gin.Context) {
+    slug := c.Param("slug")
+    author := c.Param("author")
+    article := struct {
+      Article postgres.Article `tablename:"a"`
+      Author postgres.User `tablename:"u"`
+    }{}
+    err := h.db.QueryOne(h.ctx, &article, 
+      PartialArticleQuery+`WHERE a.slug=$1 AND u.name=$2 LIMIT 1`,
+      slug,
+      author,
+    )
+    if err != nil {
+      if errors.Is(err, sql.ErrNoRows) {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+        return
+      }
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+      return
+    }
+    c.JSON(http.StatusOK, article)
+  }
 }
