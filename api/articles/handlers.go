@@ -65,7 +65,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			return
 		}
 		var posts []PartialPostWithAuthor
-		q := PartialArticleQuery + `ORDER BY a.article_id LIMIT $1 OFFSET $2`
+		q := PartialArticleQuery + `ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`
 		err = h.db.Query(
 			h.ctx,
 			&posts,
@@ -95,7 +95,7 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 		}
 		posts := []PartialPostWithAuthor{}
 		err = h.db.Query(h.ctx, &posts,
-			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id LIMIT $2 OFFSET $3`,
+			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id DESC LIMIT $2 OFFSET $3`,
 			author,
 			PaginationSize,
 			(page-1)*PaginationSize,

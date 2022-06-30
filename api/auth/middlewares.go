@@ -19,7 +19,7 @@ func AuthRequired(c *gin.Context) {
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("error: Bad token format"))
 		return
 	}
-	if rawToken[1] != "Bearer" {
+	if rawToken[0] != "Bearer" {
 		c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("error: Bad token format"))
 		return
 	}

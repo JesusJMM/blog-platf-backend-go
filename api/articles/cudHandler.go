@@ -12,10 +12,10 @@ import (
 )
 
 type CreatePayload struct {
-	Title   string `json:"title" bindind:"required"`
+	Title   string `json:"title" binding:"required"`
 	Desc    string `json:"desc"`
 	Content string `json:"content"`
-	Slug    string `json:"slug" bindind:"required"`
+	Slug    string `json:"slug" binding:"required"`
 	SmImg   string `json:"smImg"`
 	LgImg   string `json:"lgImg"`
 }
@@ -31,7 +31,7 @@ func (h ArticleHandler) Create() gin.HandlerFunc {
       return
     }
     var payload CreatePayload
-    if err := c.ShouldBindJSON(payload); err != nil {
+    if err := c.ShouldBindJSON(&payload); err != nil {
       c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
       return
     }
@@ -64,8 +64,9 @@ func (h ArticleHandler) Update() gin.HandlerFunc {
       return
     }
     var payload articles.UpdateArticleParams
-    if err := c.ShouldBindJSON(payload); err != nil {
+    if err := c.ShouldBindJSON(&payload); err != nil {
       c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+      return
     }
     payload.UserID = claims.UID
     err = h.articleRepo.Update(&payload)
@@ -77,18 +78,23 @@ func (h ArticleHandler) Update() gin.HandlerFunc {
       c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
       return
     }
-    c.String(http.StatusOK, "Created")
+    c.String(http.StatusOK, "Updated")
   }
 }
 
 func (h ArticleHandler) Delete() gin.HandlerFunc {
   return func(c *gin.Context) {
+    claims, err := auth.GetTokenClaimsFromContext(c)
+    if err != nil {
+      c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+      return
+    }
     id, err := strconv.Atoi(c.Param("id"))
     if err != nil{
       c.JSON(http.StatusBadRequest, gin.H{"error": "id url params is not a valid integer"})
       return
     }
-    h.articleRepo.Delete(id)
+    h.articleRepo.Delete(id, claims.UID)
     c.Status(http.StatusOK)
   }
 }
