@@ -29,8 +29,8 @@ func New(db *ksql.DB, ctx context.Context, articleRepo articles.ArticleRepositor
 }
 
 type PartialPostWithAuthor struct {
-	Article PartialArticle `tablename:"a"`
-	Author  postgres.User  `tablename:"u"`
+  Article PartialArticle `tablename:"a" json:"article"`
+  Author  postgres.User  `tablename:"u" json:"author"`
 }
 
 const PartialArticleQuery = `
@@ -68,11 +68,10 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			return
 		}
 		var articles []PartialPostWithAuthor
-		q := PartialArticleQuery + `ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`
 		err = h.db.Query(
 			h.ctx,
 			&articles,
-			q,
+			PartialArticleQuery + `ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`,
 			PaginationSize,
 			(page-1)*PaginationSize,
 		)
@@ -116,8 +115,8 @@ func (h ArticleHandler) OneArticle() gin.HandlerFunc {
     slug := c.Param("slug")
     author := c.Param("author")
     article := struct {
-      Article postgres.Article `tablename:"a"`
-      Author postgres.User `tablename:"u"`
+      Article postgres.Article `tablename:"a" json:"article"`
+      Author postgres.User `tablename:"u" json:"author"`
     }{}
     err := h.db.QueryOne(h.ctx, &article, 
       PartialArticleQuery+`WHERE a.slug=$1 AND u.name=$2 LIMIT 1`,
