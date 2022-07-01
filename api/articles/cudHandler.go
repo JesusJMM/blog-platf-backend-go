@@ -56,6 +56,9 @@ func (h ArticleHandler) Create() gin.HandlerFunc {
 	}
 }
 
+// Update an Article
+// Requires authorization
+// METHOD: POST
 func (h ArticleHandler) Update() gin.HandlerFunc {
   return func(c *gin.Context) {
     claims, err := auth.GetTokenClaimsFromContext(c)
@@ -82,6 +85,9 @@ func (h ArticleHandler) Update() gin.HandlerFunc {
   }
 }
 
+// Delete an Article
+// Requires authorization
+// METHOD: POST
 func (h ArticleHandler) Delete() gin.HandlerFunc {
   return func(c *gin.Context) {
     claims, err := auth.GetTokenClaimsFromContext(c)
