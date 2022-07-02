@@ -45,7 +45,7 @@ const PaginationSize = 10
 // METHOD: GET
 func (h ArticleHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var articles []PartialPostWithAuthor
+		var articles []PartialArticleWithAuthor
 		err := h.db.Query(h.ctx, &articles,
 			PartialArticleQuery,
 		)
@@ -67,7 +67,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-		var articles []PartialPostWithAuthor
+		var articles []PartialArticleWithAuthor
 		err = h.db.Query(
 			h.ctx,
 			&articles,
@@ -83,7 +83,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 	}
 }
 
-// Return a set of PartialPostWithAuthor by author
+// Return a set of PartialAritcleWithAuthor by author
 // requires an 'author' url param
 // METHOD: GET (paginated route)
 func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
@@ -95,7 +95,7 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-		articles := []PartialPostWithAuthor{}
+		articles := []PartialArticleWithAuthor{}
 		err = h.db.Query(h.ctx, &articles,
 			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id DESC LIMIT $2 OFFSET $3`,
 			author,
