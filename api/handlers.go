@@ -27,7 +27,7 @@ func New(db *ksql.DB) gin.Engine {
 
   api.POST("/article", auth.AuthRequired, articleH.Create())
   api.PUT("/article", auth.AuthRequired, articleH.Update())
-  api.DELETE("/article", auth.AuthRequired, articleH.Create())
+  api.DELETE("/article/:id", auth.AuthRequired, articleH.Delete())
 
 	api.POST("/auth/signup", authH.Signup())
 	api.POST("/auth/login", authH.Login())
