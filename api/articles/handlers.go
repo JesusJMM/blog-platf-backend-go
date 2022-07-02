@@ -28,7 +28,7 @@ func New(db *ksql.DB, ctx context.Context, articleRepo articles.ArticleRepositor
 	}
 }
 
-type PartialPostWithAuthor struct {
+type PartialArticleWithAuthor struct {
   Article PartialArticle `tablename:"a" json:"article"`
   Author  postgres.User  `tablename:"u" json:"author"`
 }
@@ -41,19 +41,19 @@ const PartialArticleQuery = `
 
 const PaginationSize = 10
 
-// Returns all posts in the database
+// Returns all articles in the database
 // METHOD: GET
 func (h ArticleHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var posts []PartialPostWithAuthor
-		err := h.db.Query(h.ctx, &posts,
+		var articles []PartialPostWithAuthor
+		err := h.db.Query(h.ctx, &articles,
 			PartialArticleQuery,
 		)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"posts": posts})
+		c.JSON(200, gin.H{"articles": articles})
 	}
 }
 
@@ -79,7 +79,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"posts": articles})
+		c.JSON(200, gin.H{"articles": articles})
 	}
 }
 
@@ -106,7 +106,7 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(200, gin.H{"posts": articles})
+		c.JSON(200, gin.H{"articles": articles})
 	}
 }
 
