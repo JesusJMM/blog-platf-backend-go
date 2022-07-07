@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/users"
@@ -51,13 +52,14 @@ func (h AuthHandler) Signup() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		token, err := SignToken(newUser.ID)
+		token, err := SignToken(newUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.Header("Authorization", token)
-		c.JSON(http.StatusCreated, gin.H{"user": newUser})
+    c.SetCookie("token", token, int(time.Hour) * 24, "/", "localhost", false, true)
+    c.JSON(http.StatusCreated, gin.H{"user": newUser, "token": token})
 	}
 }
 
@@ -85,15 +87,15 @@ func (h AuthHandler) Login() gin.HandlerFunc {
 			return
 		}
 		if !users.ValidPassword(payload.Password, dbUser.Password) {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid password"})
+			c.JSON(http.StatusForbidden, gin.H{"error": "Invalid password"})
 			return
 		}
-		token, err := SignToken(dbUser.ID)
+		token, err := SignToken(dbUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.Header("Authorization", token)
-		c.JSON(http.StatusCreated, gin.H{"user": dbUser})
+    c.JSON(http.StatusOK, gin.H{"user": dbUser, "token": token})
 	}
 }

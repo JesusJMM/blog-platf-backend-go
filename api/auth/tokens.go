@@ -5,11 +5,14 @@ import (
 	"os"
 	"time"
 
+	"github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/golang-jwt/jwt/v4"
 )
 
 type TokenClaims struct {
 	UID int `json:"uid"`
+	UserName string `json:"userName"`
+	UserImg string `json:"userImg"`
 	jwt.RegisteredClaims
 }
 
@@ -21,9 +24,11 @@ func init() {
 	SECRET_KEY = []byte(os.Getenv("TOKEN_SECRET_KEY"))
 }
 
-func SignToken(UID int) (string, error) {
+func SignToken(user postgres.User) (string, error) {
 	claims := TokenClaims{
-		UID,
+    user.ID,
+    user.Name,
+    *user.Img,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TOKEN_DURATION)),
 			NotBefore: jwt.NewNumericDate(time.Now()),

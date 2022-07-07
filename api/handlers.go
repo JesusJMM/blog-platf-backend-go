@@ -8,6 +8,7 @@ import (
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/users"
 	articlesRepo "github.com/JesusJMM/blog-plat-go/postgres/repos/articles"
 	"github.com/gin-gonic/gin"
+  "github.com/gin-contrib/cors"
 	"github.com/vingarcia/ksql"
 )
 
@@ -15,6 +16,9 @@ import (
 // registered
 func New(db *ksql.DB) gin.Engine {
 	r := gin.Default()
+  corsConfig := cors.DefaultConfig()
+  corsConfig.AllowAllOrigins = true 
+  r.Use(cors.New(corsConfig))
 	api := r.Group("/api")
 
 	articleH := articles.New(db, context.Background(), articlesRepo.NewArticleRepo(db, context.Background()))
