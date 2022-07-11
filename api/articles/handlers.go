@@ -64,7 +64,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 		queryPage := c.DefaultQuery("page", "1")
 		page, err := strconv.Atoi(queryPage)
 		if err != nil {
-			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
+			c.JSON(400, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
 		var articles []PartialArticleWithAuthor

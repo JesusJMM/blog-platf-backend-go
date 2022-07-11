@@ -81,3 +81,15 @@ func Test_AllController(t *testing.T) {
 		assert.Equal(t, 500, w.Code)
 	})
 }
+
+// Test the 'Paginated' controller
+func Test_PaginatedController(t *testing.T){
+  t.Run("Should return 400 if pass invaild page param", func(t *testing.T) {
+    r := setupTestingRouter(ksql.Mock{})
+    w := httptest.NewRecorder()
+    req, _ := http.NewRequest("GET", "/paginated?page=asdf", nil)
+    r.ServeHTTP(w, req)
+
+    assert.Equal(t, 400, w.Code)
+  })
+}
