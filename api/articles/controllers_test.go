@@ -2,6 +2,7 @@ package articles
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -21,7 +22,7 @@ func setupTestingRouter(db ksql.Provider) *gin.Engine {
 	r := gin.Default()
 	r.GET("/all", controllers.All())
 	r.GET("/paginated", controllers.Paginated())
-	r.GET("/byAuthorPaginated", controllers.ByAuthorPaginated())
+  r.GET("/byAuthorPaginated/:author", controllers.ByAuthorPaginated())
 	r.GET("/one", controllers.OneArticle())
 	return r
 }
@@ -99,5 +100,23 @@ func Test_PaginatedController(t *testing.T){
     }
     w := makeRequest(mockDB, "GET", "/paginated?page=1", nil)
     assert.Equal(t, 200, w.Code)
+  })
+}
+
+func Test_ByAuthorPaginatedController(t *testing.T){
+  t.Run("Should return 400 if pass invaild page param", func(t *testing.T) {
+    w := makeRequest(ksql.Mock{}, "GET", "/byAuthorPaginated/testUser", nil)
+
+    assert.Equal(t, 400, w.Code)
+  })
+  t.Run("Should return 404 if user does not exist", func(t *testing.T) {
+    mockDB := ksql.Mock{
+			QueryFn: func(ctx context.Context, record interface{}, query string, params ...interface{}) error {
+        return sql.ErrNoRows
+      },
+    }
+    w := makeRequest(mockDB, "GET", "/byAuthorPaginated/testUser", nil)
+
+    assert.Equal(t, 404, w.Code)
   })
 }
