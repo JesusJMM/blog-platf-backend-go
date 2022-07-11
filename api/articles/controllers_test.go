@@ -119,4 +119,14 @@ func Test_ByAuthorPaginatedController(t *testing.T){
 
     assert.Equal(t, 404, w.Code)
   })
+  t.Run("Should return 500 if db returns error", func(t *testing.T) {
+    mockDB := ksql.Mock{
+			QueryFn: func(ctx context.Context, record interface{}, query string, params ...interface{}) error {
+        return errors.New("Some thing went wrong")
+      },
+    }
+    w := makeRequest(mockDB, "GET", "/byAuthorPaginated/testUser", nil)
+
+    assert.Equal(t, 500, w.Code)
+  })
 }
