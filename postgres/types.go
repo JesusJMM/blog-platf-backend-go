@@ -16,6 +16,7 @@ type Article struct {
 	SmImg     *string   `ksql:"sm_img" json:"smImg"`
 	LgImg     *string   `ksql:"lg_img" json:"lgImg"`
 	UserID    int       `ksql:"user_id" json:"userID"`
+	Published bool      `ksql:"published" json:"published"`
 }
 
 // Struct of user
