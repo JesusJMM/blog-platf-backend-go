@@ -92,4 +92,18 @@ func Test_PaginatedController(t *testing.T){
 
     assert.Equal(t, 400, w.Code)
   })
+  t.Run("Should return 200", func(t *testing.T) {
+    mockDB := ksql.Mock{
+			QueryFn: func(ctx context.Context, record interface{}, query string, params ...interface{}) error {
+				ksqltest.FillSliceWith(record, testArticleData)
+        return nil
+      },
+    }
+    r := setupTestingRouter(mockDB)
+    w := httptest.NewRecorder()
+    req, _ := http.NewRequest("GET", "/paginated?page=asdf", nil)
+    r.ServeHTTP(w, req)
+
+    assert.Equal(t, 200, w.Code)
+  })
 }
