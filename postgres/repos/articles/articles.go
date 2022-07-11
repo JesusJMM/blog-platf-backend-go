@@ -14,7 +14,7 @@ import (
 type ArticleRepository interface {
 	Create(postgres.Article) (postgres.Article, error)
 	Update(*UpdateArticleParams) error
-	Delete(int, int) error
+	Delete(articleID int, authorID int) error
 }
 
 type ArticleRepo struct {

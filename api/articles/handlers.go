@@ -15,12 +15,12 @@ import (
 )
 
 type ArticleHandler struct {
-	db  *ksql.DB
+	db  ksql.Provider 
 	ctx context.Context
   articleRepo articles.ArticleRepository
 }
 
-func New(db *ksql.DB, ctx context.Context, articleRepo articles.ArticleRepository) ArticleHandler {
+func New(db ksql.Provider, ctx context.Context, articleRepo articles.ArticleRepository) ArticleHandler {
 	return ArticleHandler{
 		db:  db,
 		ctx: ctx,
