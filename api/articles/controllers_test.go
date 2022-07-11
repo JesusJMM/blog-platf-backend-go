@@ -19,7 +19,9 @@ import (
 
 func setupTestingRouter(db ksql.Provider) *gin.Engine {
 	controllers := New(db, context.Background(), articles.NewMockedArticleRepo())
-	r := gin.Default()
+  gin.DebugPrintRouteFunc = func(httpMethod string, absolutePath string, handlerName string, nuHandlers int){}
+  gin.SetMode(gin.TestMode)
+	r := gin.New()
 	r.GET("/all", controllers.All())
 	r.GET("/paginated", controllers.Paginated())
   r.GET("/byAuthorPaginated/:author", controllers.ByAuthorPaginated())
@@ -128,5 +130,15 @@ func Test_ByAuthorPaginatedController(t *testing.T){
     w := makeRequest(mockDB, "GET", "/byAuthorPaginated/testUser", nil)
 
     assert.Equal(t, 500, w.Code)
+  })
+  t.Run("Should return 200", func(t *testing.T){
+    mockDB := ksql.Mock{
+			QueryFn: func(ctx context.Context, record interface{}, query string, params ...interface{}) error {
+				ksqltest.FillSliceWith(record, testArticleData)
+        return nil
+      },
+    }
+    w := makeRequest(mockDB, "GET", "/byAuthorPaginated/testUser", nil)
+    assert.Equal(t, 200, w.Code)
   })
 }
