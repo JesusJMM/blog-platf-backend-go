@@ -92,7 +92,7 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 		queryPage := c.DefaultQuery("page", "1")
 		page, err := strconv.Atoi(queryPage)
 		if err != nil {
-			c.JSON(500, gin.H{"error": "'page' query param must be a number"})
+			c.JSON(400, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
 		articles := []PartialArticleWithAuthor{}
@@ -103,6 +103,10 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 			(page-1)*PaginationSize,
 		)
 		if err != nil {
+      if errors.Is(err, sql.ErrNoRows){
+        c.JSON(404, gin.H{"error": err.Error()})
+        return
+      }
 			c.JSON(500, gin.H{"error": err.Error()})
 			return
 		}

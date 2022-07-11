@@ -105,7 +105,7 @@ func Test_PaginatedController(t *testing.T){
 
 func Test_ByAuthorPaginatedController(t *testing.T){
   t.Run("Should return 400 if pass invaild page param", func(t *testing.T) {
-    w := makeRequest(ksql.Mock{}, "GET", "/byAuthorPaginated/testUser", nil)
+    w := makeRequest(ksql.Mock{}, "GET", "/byAuthorPaginated/testUser?page=adf", nil)
 
     assert.Equal(t, 400, w.Code)
   })
