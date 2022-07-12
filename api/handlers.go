@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/JesusJMM/blog-plat-go/api/articles"
+	"github.com/JesusJMM/blog-plat-go/api/authors"
 	"github.com/JesusJMM/blog-plat-go/api/auth"
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/users"
 	articlesRepo "github.com/JesusJMM/blog-plat-go/postgres/repos/articles"
@@ -23,6 +24,7 @@ func New(db *ksql.DB) gin.Engine {
 
 	articleH := articles.New(db, context.Background(), articlesRepo.NewArticleRepo(db, context.Background()))
 	authH := auth.New(db, context.Background(), users.New(db, context.Background()))
+  authorsC := authors.New(db, context.Background())
 
 	api.GET("/articles/all", articleH.All())
 	api.GET("/articles/paginated", articleH.Paginated())
@@ -35,5 +37,7 @@ func New(db *ksql.DB) gin.Engine {
 
 	api.POST("/auth/signup", authH.Signup())
 	api.POST("/auth/login", authH.Login())
+
+  api.GET("/authors/all", authorsC.GetAll())
 	return *r
 }
