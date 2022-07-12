@@ -45,7 +45,7 @@ const PaginationSize = 10
 // METHOD: GET
 func (h ArticleHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var articles []PartialArticleWithAuthor
+		var articles = []PartialArticleWithAuthor{}
 		err := h.db.Query(h.ctx, &articles,
 			PartialArticleQuery + "WHERE a.published = true",
 		)
@@ -67,7 +67,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 			c.JSON(400, gin.H{"error": "'page' query param must be a number"})
 			return
 		}
-		var articles []PartialArticleWithAuthor
+		var articles = []PartialArticleWithAuthor{}
 		err = h.db.Query(
 			h.ctx,
 			&articles,
