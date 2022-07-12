@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -20,28 +21,28 @@ func Test_Signtoken(t *testing.T){
       ID: 3,
       Img: &img,
     })
-    assert.NotNil(t, err, "Fail to sing token: %s", err)
+    assert.Nil(t, err, "Fail to sing token: %s", err)
   })
 }
 
 func Test_ParseToken(t *testing.T){
   t.Run("Should return error with invalid token", func(t *testing.T){
-    _, _, err := ParseToken("invalid token")
-    assert.NotNil(t, err, "Not return error with invalid token")
+    _, _, err := ParseToken("invalidtoken")
+    fmt.Printf("error: %v", err)
+    if err == nil {
+      t.Fatal("Error is nil")
+    }
   })
 }
 
 func Test_SingAndParseToken(t *testing.T){
-  t.Run("Signed tokens should be parsed", func(t *testing.T){
-    tokenString, err := SignToken(testUser)
+  tokenString, err := SignToken(testUser)
 
-    assert.NotNilf(t, err, "Fail to sing token: %s", err)
+  assert.Nilf(t, err, "Fail to sing token: %s", err)
 
-    _, claims, err := ParseToken(tokenString)
-    assert.NotNilf(t, err, "Fail to parse token: %s", err)
+  _, claims, err := ParseToken(tokenString)
+  assert.Nilf(t, err, "Fail to parse token: %s", err)
 
-    assert.Equal(t, claims.UID, testUser.ID)
-    assert.Equal(t, claims.UserName, testUser.Name)
-  })  
-
+  assert.Equal(t, claims.UID, testUser.ID)
+  assert.Equal(t, claims.UserName, testUser.Name)
 }

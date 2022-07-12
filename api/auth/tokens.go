@@ -12,7 +12,7 @@ import (
 type TokenClaims struct {
 	UID int `json:"uid"`
 	UserName string `json:"userName"`
-	UserImg string `json:"userImg"`
+	UserImg *string `json:"userImg"`
 	jwt.RegisteredClaims
 }
 
@@ -28,7 +28,7 @@ func SignToken(user postgres.User) (string, error) {
 	claims := TokenClaims{
     user.ID,
     user.Name,
-    *user.Img,
+    user.Img,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TOKEN_DURATION)),
 			NotBefore: jwt.NewNumericDate(time.Now()),
@@ -47,6 +47,9 @@ func ParseToken(tokenString string) (*jwt.Token, *TokenClaims, error) {
 		}
 		return SECRET_KEY, nil
 	})
+  if err != nil {
+		return nil, nil, err
+  }
 	if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
 		return token, claims, nil
 	} else {
