@@ -47,7 +47,7 @@ func (h ArticleHandler) All() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var articles []PartialArticleWithAuthor
 		err := h.db.Query(h.ctx, &articles,
-			PartialArticleQuery,
+			PartialArticleQuery + "WHERE a.published = true",
 		)
 		if err != nil {
 			c.JSON(500, gin.H{"error": err.Error()})
@@ -71,7 +71,7 @@ func (h ArticleHandler) Paginated() gin.HandlerFunc {
 		err = h.db.Query(
 			h.ctx,
 			&articles,
-			PartialArticleQuery + `ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`,
+			PartialArticleQuery + `WHERE a.published = true ORDER BY a.article_id DESC LIMIT $1 OFFSET $2`,
 			PaginationSize,
 			(page-1)*PaginationSize,
 		)
@@ -97,7 +97,7 @@ func (h ArticleHandler) ByAuthorPaginated() gin.HandlerFunc {
 		}
 		articles := []PartialArticleWithAuthor{}
 		err = h.db.Query(h.ctx, &articles,
-			PartialArticleQuery+`WHERE u.name=$1 ORDER BY a.article_id DESC LIMIT $2 OFFSET $3`,
+			PartialArticleQuery+`WHERE u.name=$1 AND a.published=true ORDER BY a.article_id DESC LIMIT $2 OFFSET $3`,
 			author,
 			PaginationSize,
 			(page-1)*PaginationSize,
