@@ -16,12 +16,12 @@ import (
 )
 
 type AuthHandler struct {
-	db       *ksql.DB
+	db       ksql.Provider
 	ctx      context.Context
 	userRepo users.UserRepository
 }
 
-func New(db *ksql.DB, ctx context.Context, userRepo users.UserRepository) *AuthHandler {
+func New(db ksql.Provider, ctx context.Context, userRepo users.UserRepository) *AuthHandler {
 	return &AuthHandler{
 		db,
 		ctx,
