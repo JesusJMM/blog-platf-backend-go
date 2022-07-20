@@ -2,6 +2,7 @@ package authors
 
 import (
 	"context"
+	"log"
 	"net/http"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -32,5 +33,20 @@ func (s AuthorsService) GetAll() gin.HandlerFunc {
       })
     }
     c.JSON(http.StatusOK, gin.H{"authors": users})
+  }
+}
+func (s AuthorsService) One() gin.HandlerFunc {
+  return func(c *gin.Context){
+    var users = postgres.User{}
+    q := `FROM users WHERE users.name=$1 LIMIT 1`
+    err := s.db.QueryOne(s.ctx, &users, q, c.Param("authorName"))
+    if err != nil {
+      log.Println("err: ",err)
+      c.JSON(http.StatusInternalServerError, gin.H{
+        "error": "Internal Server Error",
+      })
+      return
+    }
+    c.JSON(http.StatusOK, gin.H{"author": users})
   }
 }

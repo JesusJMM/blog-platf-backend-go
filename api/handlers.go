@@ -39,5 +39,6 @@ func New(db *ksql.DB) gin.Engine {
 	api.POST("/auth/login", authH.Login())
 
   api.GET("/authors/all", authorsC.GetAll())
+  api.GET("/author/:authorName", authorsC.One())
 	return *r
 }
