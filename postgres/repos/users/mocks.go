@@ -7,10 +7,6 @@ type MockedUserRepo struct {
 	ChangePasswordFn func(int, string) error
 }
 
-func NewMocked() MockedUserRepo {
-  return MockedUserRepo{}
-}
-
 func (r MockedUserRepo) Create(user postgres.User) (postgres.User, error) {
   if r.CreateFn != nil {
     return r.CreateFn(user)

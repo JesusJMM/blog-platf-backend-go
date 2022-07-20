@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
-	"time"
   "strings"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
@@ -63,7 +62,6 @@ func (h AuthHandler) Signup() gin.HandlerFunc {
 			return
 		}
 		c.Header("Authorization", token)
-    c.SetCookie("token", token, int(time.Hour) * 24, "/", "localhost", false, true)
     c.JSON(http.StatusCreated, gin.H{"user": newUser, "token": token})
 	}
 }
