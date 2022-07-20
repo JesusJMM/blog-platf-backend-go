@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"time"
+  "strings"
 
 	"github.com/JesusJMM/blog-plat-go/postgres"
 	"github.com/JesusJMM/blog-plat-go/postgres/repos/users"
@@ -49,6 +50,10 @@ func (h AuthHandler) Signup() gin.HandlerFunc {
 			Img:      &payload.Img,
 		})
 		if err != nil {
+      if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+        c.JSON(http.StatusConflict, gin.H{"error": "Username already taken"})
+        return
+      }
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
